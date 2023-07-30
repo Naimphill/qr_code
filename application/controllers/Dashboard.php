@@ -29,6 +29,32 @@ class Dashboard extends CI_Controller
         //load view
         $this->load->view('dashboard', $data);
     }
+
+    public function cari_id_JSON()
+{
+    $id_barang = $_POST['id_barang'];
+
+    // Query untuk mengambil data barang berdasarkan id_barang
+    $query = $this->db->select('*')->from('tbl_barang')
+        ->where('id_barang =', $id_barang)
+        ->get();
+    $barang = $query->result();
+
+    // Query untuk mengambil semua data dari tabel tbl_master_barang
+    $master = $this->Mcrud->get_all_data('tbl_master_barang')->result();
+
+    // Menyusun data hasil query ke dalam array
+    $data = array(
+        'id_barang' => $id_barang,
+        'barang' => $barang,
+        'master' => $master
+    );
+
+    // Mengirim data dalam format JSON
+    header('Content-Type: application/json');
+    echo json_encode($data);
+}
+
 // public function cari_data()
 // {
 //     // Pastikan permintaan adalah POST
