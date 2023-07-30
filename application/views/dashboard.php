@@ -202,7 +202,9 @@
                         <div id="reader" width="600px"></div>
                         <input type="hidden" name="result" id="result">
 
-                        <div id="resultDisplay"></div>
+                        <div id="resultDisplay">
+
+                        </div>
                         <?php
                         // Misalkan $barang adalah array yang berisi data barang-barang
                         // foreach ($barang as $key) {
@@ -276,17 +278,9 @@
                                     marginheight="0" marginwidth="0"
                                     src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=SMK%20Tunas%20Harapan%20Pati+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a
                                         href="https://www.maps.ie/population/">Find Population on Map</a></iframe></div>
-
-
-
-
-
                         </div>
 
                     </div>
-
-
-
                 </div>
 
             </div>
@@ -342,7 +336,79 @@
             let id = decodedText;
             html5QrcodeScanner.clear().then(_ => {
                 // Set nilai hasil pemindaian pada elemen dengan ID 'resultDisplay'
-                $('#resultDisplay').text(decodedText);
+                // Kirim data ke server menggunakan Fetch API dengan metode POST                
+                fetch(`<?php echo site_url('Dashboard/cari_id_JSON') ?>`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `id_barang=${encodeURIComponent(decodedText)}`
+                })
+                    .then(response => response.json()) // Mengubah respons menjadi JSON (jika diperlukan)
+                    .then(datas => {
+                        // Tanggapan dari server
+                        // console.log(datas);
+                        const barang = datas.barang
+                        // Lakukan tindakan sesuai respons dari server (jika perlu)
+                        if(barang.length <= 0) {
+                            $('#resultDisplay').append(`
+                                    <center>
+                                        <h4>Data Tidak Ditemukan</h4>
+                                    </center>`)
+                        } else {
+                            barang.forEach(data => {
+                                console.log(data)
+                                if(data.id_barang === decodedText) {
+                                    $('#resultDisplay').append(`
+                                <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <center>
+                                                <h2>Hasil Pencarian</h2>
+                                            </center>
+                                        </div>
+                                        <div class="card-body">
+                                            <form method="POST" action="">
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Id Barang</label>
+                                                    <input type="text" class="form-control" name="" value="${data.id_barang}" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Id Master</label>
+                                                    <input type="text" class="form-control" name="" value="${data.id_master}" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Nama Barang</label>
+                                                    <input type="text" class="form-control" name="nm_barang" value="${data.nm_barang}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Keterangan</label>
+                                                    <input type="text" class="form-control" name="keterangan"
+                                                        value="${data.keterangan}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleFormControlInput1">Status</label>
+                                                    <select class="form-control" name="status" id="">
+                                                        <option value="${data.status}">${data.status}</option>
+                                                        <option value="Normal">Normal</option>
+                                                        <option value="Rusak">Rusak</option>
+                                                    </select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `)
+                                }
+                            })
+                        }
+                    }).catch(error => {
+                        // Jika terjadi kesalahan dalam permintaan Fetch
+                        console.error(error);
+                        alert('something wrong');
+                    });
             }).catch(error => {
                 alert('something wrong');
             });
