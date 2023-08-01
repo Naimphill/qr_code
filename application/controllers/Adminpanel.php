@@ -1,12 +1,12 @@
 <?php
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+
 
 class Adminpanel extends CI_Controller
 {
     function __construct()
     {
         parent::__construct();
+        // $this->load->library('qrlib');
         $this->load->model('Mcrud');
         $this->cek_login();
     }
@@ -241,41 +241,41 @@ class Adminpanel extends CI_Controller
 
     // }
 
-    public function generateQRCode($id_barang)
-    {
-        // Dapatkan data barang berdasarkan id_barang
-        $barang = $this->Mcrud->get_barang_by_id($id_barang);
+    // public function generateQRCode($id_barang)
+    // {
+    //     // Dapatkan data barang berdasarkan id_barang
+    //     $barang = $this->Mcrud->get_barang_by_id($id_barang);
 
-        // Jika barang ditemukan, buat QR code
-        if ($barang) {
-            // Ambil id_barang untuk dimasukkan ke dalam QR code
-            $data = $barang['id_barang'];
+    //     // Jika barang ditemukan, buat QR code
+    //     if ($barang) {
+    //         // Ambil id_barang untuk dimasukkan ke dalam QR code
+    //         $data = $barang['id_barang'];
 
-            // Inisialisasi objek QR code
-            $qrCode = new QrCode($data);
+    //         // Inisialisasi objek QR code
+    //         $qrCode = new QrCode($data);
 
-            // Set ukuran QR code (opsional)
-            $qrCode->setSize(300);
+    //         // Set ukuran QR code (opsional)
+    //         $qrCode->setSize(300);
 
-            // Simpan QR code sebagai string
-            $qrCodeString = $qrCode->writeString();
+    //         // Simpan QR code sebagai string
+    //         $qrCodeString = $qrCode->writeString();
 
-            // Simpan QR code sebagai file dengan nama id_barang.png di folder qr_code
-            $qrCodePath = FCPATH . 'qr_code/' . $id_barang . '.png';
-            file_put_contents($qrCodePath, $qrCodeString);
+    //         // Simpan QR code sebagai file dengan nama id_barang.png di folder qr_code
+    //         $qrCodePath = FCPATH . 'qr_code/' . $id_barang . '.png';
+    //         file_put_contents($qrCodePath, $qrCodeString);
 
-            // Simpan nama file QR code ke dalam database
-            $this->Mcrud->update_qr_code_path($id_barang, $qrCodePath);
+    //         // Simpan nama file QR code ke dalam database
+    //         $this->Mcrud->update_qr_code_path($id_barang, $qrCodePath);
 
-            // Tampilkan halaman dengan QR code
-            $data['qr_code'] = $qrCodePath;
-            $data['content'] = "admin/qr_code_view";
-            $this->load->view('admin/template', $data);
-        } else {
-            // Jika barang tidak ditemukan, tampilkan pesan kesalahan
-            echo "Barang tidak ditemukan.";
-        }
-    }
+    //         // Tampilkan halaman dengan QR code
+    //         $data['qr_code'] = $qrCodePath;
+    //         $data['content'] = "admin/qr_code_view";
+    //         $this->load->view('admin/template', $data);
+    //     } else {
+    //         // Jika barang tidak ditemukan, tampilkan pesan kesalahan
+    //         echo "Barang tidak ditemukan.";
+    //     }
+    // }
 
     public function add_barang()
     {
@@ -300,21 +300,45 @@ class Adminpanel extends CI_Controller
 
         // Gabungkan nilai 'KategoriID', 'MasterID', '00', dan nomor urut baru untuk menghasilkan 'id_barang' yang baru
         $new_id_barang = $id_kategori . $id_master . '0' . $new_urut_str;
-
+        $qr_code = $new_id_barang . '.png';
         $datainsert = array(
             'id_barang' => $new_id_barang,
             'id_master' => $id_master,
             'nm_barang' => $nm_barang,
             'keterangan' => $keterangan,
+            'qr_code' => $qr_code,
             'status' => $status
         );
         // Insert data barang ke tabel 'tbl_barang'
         $this->Mcrud->insert('tbl_barang', $datainsert);
         // Generate QR code for the newly added barang
-        // $this->generateQRCode($new_id_barang);
+        $this->qrcode($new_id_barang);
         $this->session->set_flashdata('flash', 'Disimpan');
         redirect('Adminpanel/barang');
     }
+    function qrcode($id_barang)
+    {
+        // QR Code akan kita render menjadi file png
+
+        qrcode::png(
+            $id_barang,
+            $outfile = FCPATH . 'assets/qrcode/' . $id_barang . '.png', // Simpan file di folder qrcode,
+            $level = QR_ECLEVEL_H,
+            $size = 6,
+            $margin = 1
+        );
+    }
+    // private function generateQRCode($data)
+    // {
+    //     // Set the data to be encoded into QR Code
+    //     $text = $data;
+
+    //     // Set the filename to save the QR Code image (optional)
+    //     $file = FCPATH . 'assets/qrcode/' . $data . '.png';
+
+    //     // Generate the QR Code
+    //     QRcode::png($text, $file, QR_ECLEVEL_L, 10);
+    // }
     public function hapus_barang($id)
     {
         $datawhere = array('id_barang' => $id);
@@ -335,6 +359,44 @@ class Adminpanel extends CI_Controller
         // Load view
         $data['content'] = "admin/detail_barang";
         $this->load->view('admin/template', $data);
+    }
+    public function cari_id()
+    {
+        $id_barang = $_POST['id_barang'];
+        $data['id_barang'] = $id_barang;
+        $data['content'] = "admin/adminpanel";
+        $query = $this->db->select('*')->from('tbl_barang')
+            ->where('id_barang >=', $id_barang)
+            ->get();
+        $data['barang'] = $query->result();
+        $data['master'] = $this->Mcrud->get_all_data('tbl_master_barang')->result();
+
+        //load view
+        $this->load->view('admin/template', $data);
+    }
+    public function cari_id_JSON()
+    {
+        $id_barang = $_POST['id_barang'];
+
+        // Query untuk mengambil data barang berdasarkan id_barang
+        $query = $this->db->select('*')->from('tbl_barang')
+            ->where('id_barang =', $id_barang)
+            ->get();
+        $barang = $query->result();
+
+        // Query untuk mengambil semua data dari tabel tbl_master_barang
+        $master = $this->Mcrud->get_all_data('tbl_master_barang')->result();
+
+        // Menyusun data hasil query ke dalam array
+        $data = array(
+            'id_barang' => $id_barang,
+            'barang' => $barang,
+            'master' => $master
+        );
+
+        // Mengirim data dalam format JSON
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
 
 }

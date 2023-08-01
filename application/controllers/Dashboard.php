@@ -29,31 +29,28 @@ class Dashboard extends CI_Controller
         //load view
         $this->load->view('dashboard', $data);
     }
-// public function cari_data()
-// {
-//     // Pastikan permintaan adalah POST
-//     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-//         http_response_code(400);
-//         echo json_encode(['error' => 'Bad request']);
-//         return;
-//     }
+    public function cari_id_JSON()
+    {
+        $id_barang = $_POST['id_barang'];
 
-//     // Ambil data hasil pemindaian dari POST data
-//     $id_barang = $_POST['id_barang'];
+        // Query untuk mengambil data barang berdasarkan id_barang
+        $query = $this->db->select('*')->from('tbl_barang')
+            ->where('id_barang =', $id_barang)
+            ->get();
+        $barang = $query->result();
 
-//     // Lakukan operasi lain yang diperlukan dengan data $id_barang
-//     $query = $this->db->select('*')->from('tbl_barang')
-//         ->where('id_barang >=', $id_barang)
-//         ->get();
-//     $barang = $query->result();
-//     $master = $this->Mcrud->get_all_data('tbl_master_barang')->result();
+        // Query untuk mengambil semua data dari tabel tbl_master_barang
+        $master = $this->Mcrud->get_all_data('tbl_master_barang')->result();
 
-//     // Setelah selesai, tentukan URL redirect (misalnya, 'dashboard' atau halaman lain yang sesuai)
-//     $redirect_url = base_url('dashboard'); // Ubah 'dashboard' sesuai dengan URL yang diinginkan
+        // Menyusun data hasil query ke dalam array
+        $data = array(
+            'id_barang' => $id_barang,
+            'barang' => $barang,
+            'master' => $master
+        );
 
-//     // Kirimkan URL redirect sebagai respons
-//     header('Content-Type: application/json');
-//     echo json_encode(['redirect_url' => $redirect_url]);
-//     return;
-// }
+        // Mengirim data dalam format JSON
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
 }

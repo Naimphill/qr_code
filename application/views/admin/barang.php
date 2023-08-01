@@ -182,9 +182,11 @@
                                             <td>
                                                 <?php echo $val->status; ?>
                                             </td>
-                                            <td>
-                                                <img style="width:50px;height:50px ;"
-                                                    src="<?php echo base_url('./qr_code/.$key->qr_code') ?>" alt="">
+                                            <td><a href="" data-toggle="modal" data-target=".qr_<?php echo $idb; ?>">
+                                                    <img style="width:50px;height:50px ;"
+                                                        src="<?php echo base_url('/assets/qrcode/' . $val->qr_code) ?>"
+                                                        alt="">
+                                                </a>
                                             </td>
                                             <td>
                                                 <a class="btn btn-outline-warning" href="" data-toggle="modal"
@@ -245,6 +247,36 @@
                                             </div>
                                         </div>
                                         <!-- End Modal Edit -->
+                                        <!-- Modal Barcode-->
+                                        <div class="modal fade qr_<?php echo $idb ?>" id="qr_<?php echo $idb ?>"
+                                            tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Detail QR
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <center>
+
+                                                            <img style="width:500px;height:500px ;"
+                                                                src="<?php echo base_url('/assets/qrcode/' . $val->qr_code) ?>"
+                                                                alt="">
+                                                            <br>
+                                                        </center>
+                                                        <h4 style="color:#000 ;">ID :
+                                                            <?php echo $idb; ?>
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Modal Barcode -->
                                     <?php } ?>
                                 </tbody>
                             </table>
@@ -257,6 +289,9 @@
     <!-- End Barang -->
 </div>
 <!-- /page content -->
+
+
+
 <!-- Modal Tambah  Master-->
 <div class="modal fade tambahmaster" id="tambahmaster" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
