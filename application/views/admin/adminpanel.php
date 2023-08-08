@@ -253,7 +253,7 @@
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">ID Barang</th>
-                            <th scope="col">ID Master</th>
+                            <th scope="col">Jenis Barang</th>
                             <th scope="col">Nama Barang</th>
                             <th scope="col">Keterangan</th>
                             <th scope="col">Status</th>
@@ -351,7 +351,7 @@
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">ID Barang</th>
-                            <th scope="col">ID Master</th>
+                            <th scope="col">Jenis Barang</th>
                             <th scope="col">Nama Barang</th>
                             <th scope="col">Keterangan</th>
                             <th scope="col">Status</th>
@@ -450,7 +450,7 @@
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">ID Barang</th>
-                            <th scope="col">ID Master</th>
+                            <th scope="col">Jenis Barang</th>
                             <th scope="col">Nama Barang</th>
                             <th scope="col">Keterangan</th>
                             <th scope="col">Status</th>
