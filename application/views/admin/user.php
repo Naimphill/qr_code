@@ -16,7 +16,7 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-8">
-                                <h2 class="card-title">Data User</h2>
+                                <h2 class="card-title">Data Admin</h2>
                             </div>
                             <div class="col-md-4">
                                 <a class="btn btn-primary" href="" data-toggle="modal" data-target=".tambah">Tambah
@@ -39,28 +39,150 @@
                                 <tbody>
                                     <?php $no = 1;
                                     foreach ($user as $key) {
-                                        $idu = $key->id_user; ?>
-                                        <tr>
-                                            <th scope="row">
-                                                <?php echo $no++; ?>
-                                            </th>
-                                            <td>
-                                                <?php echo $key->nm_lengkap; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $key->username; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $key->level ?>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-outline-danger tombolhapus"
-                                                    href="<?php echo site_url('Adminpanel/hapus_user/' . $idu) ?>">Hapus</a>
-                                            </td>
+                                        if ($key->level == 'admin') {
+                                            $idu = $key->id_user; ?>
+                                            <tr>
+                                                <th scope="row">
+                                                    <?php echo $no++; ?>
+                                                </th>
+                                                <td>
+                                                    <?php echo $key->nm_lengkap; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->username; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->level ?>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-outline-danger tombolhapus"
+                                                        href="<?php echo site_url('Adminpanel/hapus_user/' . $idu) ?>">Hapus</a>
+                                                </td>
 
-                                        </tr>
+                                            </tr>
 
-                                    <?php } ?>
+                                        <?php }
+                                    } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+        <div class="row">
+            <div class="col-md-6 sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h2 class="card-title">Data user guru</h2>
+                            </div>
+                            <!-- <div class="col-md-4">
+                                <a class="btn btn-primary" href="" data-toggle="modal" data-target=".tambah">Tambah
+                                    (+)</a>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12 sm-12">
+                            <table id="datatabel2" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        <th scope="col">Nama Lengkap</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Level</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $no = 1;
+                                    foreach ($user as $key) {
+                                        if ($key->level == 'guru') {
+                                            $idu = $key->id_user; ?>
+                                            <tr>
+                                                <th scope="row">
+                                                    <?php echo $no++; ?>
+                                                </th>
+                                                <td>
+                                                    <?php echo $key->nm_lengkap; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->username; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->level ?>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-outline-danger tombolhapus"
+                                                        href="<?php echo site_url('Adminpanel/hapus_user/' . $idu) ?>">Hapus</a>
+                                                </td>
+
+                                            </tr>
+
+                                        <?php }
+                                    } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h2 class="card-title">Data user Siswa</h2>
+                            </div>
+                            <!-- <div class="col-md-4">
+                                <a class="btn btn-primary" href="" data-toggle="modal" data-target=".tambah">Tambah
+                                    (+)</a>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12 sm-12">
+                            <table id="datatabel3" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        <th scope="col">Nama Lengkap</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Level</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $no = 1;
+                                    foreach ($user as $key) {
+                                        if ($key->level == 'siswa') {
+                                            $idu = $key->id_user; ?>
+                                            <tr>
+                                                <th scope="row">
+                                                    <?php echo $no++; ?>
+                                                </th>
+                                                <td>
+                                                    <?php echo $key->nm_lengkap; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->username; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $key->level ?>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-outline-danger tombolhapus"
+                                                        href="<?php echo site_url('Adminpanel/hapus_user/' . $idu) ?>">Hapus</a>
+                                                </td>
+
+                                            </tr>
+
+                                        <?php }
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>

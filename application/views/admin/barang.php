@@ -168,6 +168,7 @@
                                                 <?php
                                                 foreach ($master as $key) {
                                                     if ($key->id_master == $val->id_master) {
+                                                        $id_m = $key->id_master;
                                                         $jenis = $key->jenis_barang;
                                                         echo $jenis;
                                                     }
@@ -211,16 +212,16 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <form method="POST"
-                                                            action="<?php echo site_url('Adminpanel/edit_master') ?>">
+                                                            action="<?php echo site_url('Adminpanel/edit_barang') ?>">
                                                             <div class="form-group">
                                                                 <label for="exampleFormControlInput1">Id Barang</label>
-                                                                <input type="text" class="form-control" name=""
+                                                                <input type="text" class="form-control" name="id_barang"
                                                                     value="<?php echo $val->id_barang; ?>" readonly>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="exampleFormControlInput1">Id Master</label>
-                                                                <input type="text" class="form-control" name=""
-                                                                    value="<?php echo $jenis; ?>" readonly>
+                                                                <input type="text" class="form-control" name="id_master"
+                                                                    value="<?php echo $id_m; ?>" readonly>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label for="exampleFormControlInput1">Nama Barang</label>

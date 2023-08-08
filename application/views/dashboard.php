@@ -32,7 +32,10 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
-
+    <!-- Sweet Alert -->
+    <link rel="stylesheet" href="<?php echo base_url('assets/allert/package/dist/sweetalert2.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/allert/package/dist/sweetalert2.min.css'); ?>">
+    <!-- end seet allert -->
     <!-- =======================================================
     Theme Name: Rapid
     Theme URL: https://bootstrapmade.com/rapid-multipurpose-bootstrap-business-template/
@@ -47,14 +50,14 @@
   ============================-->
     <header id="header">
         <div id="topbar">
-            <div class="container">
+            <!-- <div class="container">
                 <div class="social-links">
                     <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
                     <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
                     <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>
                     <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class="container">
             <div class="logo float-left">
@@ -68,12 +71,23 @@
                     <li class="active"><a href="#intro">Home</a></li>
                     <li><a href="#about">Service</a></li>
                     <li><a href="#footer">Contact Us</a></li>
+                    <?php $id_admin = $this->session->userdata('id_user');
+                    if (isset($id_admin)) { ?>
+                        <li><a class="btn btn-outline-light tombolkeluar" href="<?php $nm_user = $this->session->userdata('username');
+                        echo site_url('login/logout') ?>">Logout (<?php echo $nm_user; ?>)</a>
+                        </li>
+                    <?php } else { ?>
+                        <li><a class="btn btn-outline-light" href="<?php echo site_url('login') ?>">Login</a></li>
+                    <?php } ?>
                 </ul>
             </nav><!-- .main-nav -->
 
         </div>
     </header><!-- #header -->
-
+    <?php if ($this->session->flashdata('flash')): ?>
+        <div class="flash-data" data-flashdata="<?= $this->session->flashdata('flash'); ?>"></div>
+        <?php unset($_SESSION['flash']); ?>
+    <?php endif; ?>
     <!--==========================
     Intro Section
   ============================-->
@@ -134,7 +148,12 @@
                                 <div class="card-body">
 
                                     <?php foreach ($barang as $val) {
-                                        if ($val->id_barang == $id_barang) { ?>
+                                        if ($val->id_barang == $id_barang) {
+                                            foreach ($master as $key) {
+                                                if ($key->id_master == $val->id_master) {
+                                                    $jenis = $key->jenis_barang;
+                                                }
+                                            } ?>
 
                                             <form method="POST" action="">
                                                 <div class="form-group">
@@ -143,8 +162,8 @@
                                                         value="<?php echo $val->id_barang; ?>" readonly>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="exampleFormControlInput1">Id Master</label>
-                                                    <input type="text" class="form-control" name="" value="<?php // echo $jenis; ?>"
+                                                    <label for="exampleFormControlInput1">Jenis Barang</label>
+                                                    <input type="text" class="form-control" name="" value="<?php echo $jenis; ?>"
                                                         readonly>
                                                 </div>
                                                 <div class="form-group">
@@ -401,9 +420,13 @@
                                                     <input type="text" class="form-control" name="keterangan"
                                                         value="${data.status}"readonly>
                                                 </div>
-                                                
-                                                
                                             </form>
+                                            <form method="POST" action="<?php echo site_url('Dashboard/add_laporan') ?>" >
+                                                    <div class="form-group">
+                                                        <input type="hidden" class="form-control" name="id_barang" value="${data.id_barang}">
+                                                    </div>
+                                                    <button type="button" class="btn btn-warning" onclick="redirectToLaporan(this)">Laporkan Kerusakan</button>    
+                                                </form>
                                         </div>
                                     </div>
                                 </div>
@@ -423,6 +446,25 @@
             });
         }
 
+        function redirectToLaporan(button) {
+            const form = $(button).closest('form'); // Ubah ini menjadi selektor yang sesuai
+            Swal.fire({
+                title: 'Kamu Yakin?',
+                text: "Akan Mengirim Laporan Kerusakan?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Kirim!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false; // Mencegah aksi bawaan tombol
+        }
+
+
 
         function onScanFailure(error) {
             // handle scan failure, usually better to ignore and keep scanning.
@@ -433,7 +475,7 @@
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader",
             { fps: 10, qrbox: { width: 250, height: 250 } },
-                /* verbose= */ false);
+    /* verbose= */ false);
         html5QrcodeScanner.render(onScanSuccess, onScanFailure);
     </script>
 
@@ -469,6 +511,77 @@
         });
     </script>
     <!-- End DataTables -->
+    <!-- Sweet Alert Script -->
+    <script src="<?php echo base_url('assets/allert/package/dist/sweetalert2.all.min.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/allert/package/dist/myalert.js'); ?>"></script>
+    <script>
+        const flashData = $('.flash-data').data('flashdata');
+        if (flashData) {
+            Swal.fire({
+                title: 'Data',
+                text: 'Berhasil ' + flashData,
+                icon: 'success'
+            });
+        }
+        // Tombol Keluar
+        $('.tombolkeluar').on('click', function (e) {
+            e.preventDefault();
+            const href = $(this).attr('href');
+
+            Swal.fire({
+                title: 'Kamu Yakin?',
+                text: "Akan Keluar ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'keluar !',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = href;
+                }
+            })
+        });
+        // Tombol Hapus
+        $('.tombolhapus').on('click', function (e) {
+            e.preventDefault();
+            const href = $(this).attr('href');
+
+            Swal.fire({
+                title: 'Kamu Yakin?',
+                text: "Data Akan Dihapus !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus !',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.location.href = href;
+                }
+            })
+        });
+        $('.tombolkirim').on('click', function (e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            Swal.fire({
+                title: 'Kamu Yakin?',
+                text: "Akan Mengirim Laporan Kerusakan?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Kirim !',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // submit form jika tombol "OK" ditekan
+                }
+            })
+        });
+
+    </script>
+    <!-- End sweet allert -->
 </body>
 
 </html>

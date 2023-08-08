@@ -14,6 +14,10 @@ class Adminpanel extends CI_Controller
     {
         if (empty($this->session->userdata('username'))) {
             redirect('Login');
+        } elseif ($this->session->userdata('level') == 'siswa') {
+            redirect('Dashboard');
+        } elseif ($this->session->userdata('level') == 'guru') {
+            redirect('Dashboard');
         }
     }
     public function index()
@@ -23,8 +27,6 @@ class Adminpanel extends CI_Controller
         $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
         $data['master'] = $this->Mcrud->get_all_data('tbl_master_barang')->result();
         $data['barang'] = $this->Mcrud->get_all_data('tbl_barang')->result();
-        // $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
-
         //load view
         $this->load->view('admin/template', $data);
     }
@@ -48,8 +50,6 @@ class Adminpanel extends CI_Controller
         // cek login
         $data['content'] = "admin/user";
         $data['user'] = $this->Mcrud->get_all_data('tbl_user')->result();
-        // $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
-
         //load view
         $this->load->view('admin/template', $data);
     }
@@ -58,8 +58,6 @@ class Adminpanel extends CI_Controller
         // cek login
         $data['content'] = "admin/kategori";
         $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
-        // $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
-
         //load view
         $this->load->view('admin/template', $data);
     }
@@ -70,7 +68,18 @@ class Adminpanel extends CI_Controller
         $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
         $data['master'] = $this->Mcrud->get_all_data('tbl_master_barang')->result();
         $data['barang'] = $this->Mcrud->get_all_data('tbl_barang')->result();
-        // $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
+        //load view
+        $this->load->view('admin/template', $data);
+    }
+    public function laporan()
+    {
+        // cek login
+        $data['content'] = "admin/laporan";
+        $data['laporan'] = $this->Mcrud->get_all_data('tbl_laporan')->result();
+        $data['user'] = $this->Mcrud->get_all_data('tbl_user')->result();
+        $data['kategori'] = $this->Mcrud->get_all_data('tbl_kategori')->result();
+        $data['master'] = $this->Mcrud->get_all_data('tbl_master_barang')->result();
+        $data['barang'] = $this->Mcrud->get_all_data('tbl_barang')->result();
         //load view
         $this->load->view('admin/template', $data);
     }
@@ -185,97 +194,6 @@ class Adminpanel extends CI_Controller
         $this->session->set_flashdata('flash', 'Dihapus');
         redirect('Adminpanel/barang');
     }
-    // public function add_barang()
-    // {
-    //     // get data
-    //     $id_barang = 
-    //     $id_master = $_POST['id_master'];
-    //     $nm_barang = $_POST['nm_barang'];
-    //     $keterangan = $_POST['keterangan'];
-    //     $status = $_POST['status'];
-    //     // save data
-    //     $datainsert = array(
-    //         'id_master' => $id_master,
-    //         'nm_barang' => $nm_barang,
-    //         'keterangan' => $keterangan,
-    //         'status' => $status
-    //     );
-
-    //     // Update data ke tabel 'tbl_seleksi'
-    //     $this->Mcrud->insert('tbl_barang', $datainsert);
-    //     $this->session->set_flashdata('flash', 'Disimpan');
-    //     redirect('Adminpanel/barang');
-
-    // Atau Ini sudah generate id
-    //  $id_master = $this->input->post('id_master');
-    //     $nm_barang = $this->input->post('nm_barang');
-    //     $keterangan = $this->input->post('keterangan');
-    //     $status = $this->input->post('status');
-
-    //     // Get id_kategori from tbl_master based on id_master
-    //     $id_kategori = $this->Mcrud->get_id_kategori_by_id_master_from_tbl_master_barang($id_master);
-
-    //     // Ambil nomor urut terakhir dari 'id_bukti'
-    //     $this->db->select_max('id_barang');
-    //     $query = $this->db->get('tbl_barang');
-    //     $row = $query->row();
-    //     $last_id_barang = $row->id_barang;
-    //     $last_urut = intval(substr($last_id_barang, -5));
-
-    //     // Buat nomor urut baru dengan menambahkan 1 pada nomor urut terakhir
-    //     $new_urut = $last_urut + 1;
-    //     $new_urut_str = str_pad($new_urut, 5, '0', STR_PAD_LEFT);
-
-    //     // Gabungkan nilai 'KategoriID', 'MasterID', '00', dan nomor urut baru untuk menghasilkan 'id_barang' yang baru
-    //     $new_id_barang = $id_kategori . $id_master . '0' . $new_urut_str;
-
-    //     $datainsert = array(
-    //         'id_barang' => $new_id_barang,
-    //         'id_master' => $id_master,
-    //         'nm_barang' => $nm_barang,
-    //         'keterangan' => $keterangan,
-    //         'status' => $status
-    //     );
-    //     $this->Mcrud->insert('tbl_barang', $datainsert);
-    //     $this->session->set_flashdata('flash', 'Disimpan');
-
-    // }
-
-    // public function generateQRCode($id_barang)
-    // {
-    //     // Dapatkan data barang berdasarkan id_barang
-    //     $barang = $this->Mcrud->get_barang_by_id($id_barang);
-
-    //     // Jika barang ditemukan, buat QR code
-    //     if ($barang) {
-    //         // Ambil id_barang untuk dimasukkan ke dalam QR code
-    //         $data = $barang['id_barang'];
-
-    //         // Inisialisasi objek QR code
-    //         $qrCode = new QrCode($data);
-
-    //         // Set ukuran QR code (opsional)
-    //         $qrCode->setSize(300);
-
-    //         // Simpan QR code sebagai string
-    //         $qrCodeString = $qrCode->writeString();
-
-    //         // Simpan QR code sebagai file dengan nama id_barang.png di folder qr_code
-    //         $qrCodePath = FCPATH . 'qr_code/' . $id_barang . '.png';
-    //         file_put_contents($qrCodePath, $qrCodeString);
-
-    //         // Simpan nama file QR code ke dalam database
-    //         $this->Mcrud->update_qr_code_path($id_barang, $qrCodePath);
-
-    //         // Tampilkan halaman dengan QR code
-    //         $data['qr_code'] = $qrCodePath;
-    //         $data['content'] = "admin/qr_code_view";
-    //         $this->load->view('admin/template', $data);
-    //     } else {
-    //         // Jika barang tidak ditemukan, tampilkan pesan kesalahan
-    //         echo "Barang tidak ditemukan.";
-    //     }
-    // }
 
     public function add_barang()
     {
@@ -316,6 +234,26 @@ class Adminpanel extends CI_Controller
         $this->session->set_flashdata('flash', 'Disimpan');
         redirect('Adminpanel/barang');
     }
+    public function edit_barang()
+    {
+        // get data
+        $id_barang = $_POST['id_barang'];
+        $id_master = $_POST['id_master'];
+        $nm_barang = $_POST['nm_barang'];
+        $keterangan = $_POST['keterangan'];
+        $status = $_POST['status'];
+        // save data
+        $dataupdate = array(
+            'nm_barang' => $nm_barang,
+            'keterangan' => $keterangan,
+            'status' => $status
+        );
+
+        // Update data ke tabel 'tbl_seleksi'
+        $this->Mcrud->update('tbl_barang', $dataupdate, 'id_barang', $id_barang);
+        $this->session->set_flashdata('flash', 'Diedit');
+        redirect('Adminpanel/barang');
+    }
     function qrcode($id_barang)
     {
         // QR Code akan kita render menjadi file png
@@ -328,17 +266,7 @@ class Adminpanel extends CI_Controller
             $margin = 1
         );
     }
-    // private function generateQRCode($data)
-    // {
-    //     // Set the data to be encoded into QR Code
-    //     $text = $data;
 
-    //     // Set the filename to save the QR Code image (optional)
-    //     $file = FCPATH . 'assets/qrcode/' . $data . '.png';
-
-    //     // Generate the QR Code
-    //     QRcode::png($text, $file, QR_ECLEVEL_L, 10);
-    // }
     public function hapus_barang($id)
     {
         $datawhere = array('id_barang' => $id);
@@ -398,5 +326,46 @@ class Adminpanel extends CI_Controller
         header('Content-Type: application/json');
         echo json_encode($data);
     }
-
+    public function add_laporan()
+    {
+        // get data
+        $id_barang = $_POST['id_barang'];
+        $id_user = $this->session->userdata('id_user');
+        // save data
+        $datainsert = array(
+            'id_barang' => $id_barang,
+            'id_user' => $id_user,
+            'status' => 'Diproses'
+        );
+        // Upload data ke tabel 'tbl_laporan'
+        $this->Mcrud->insert('tbl_laporan', $datainsert);
+        $this->session->set_flashdata('flash', 'Diedit');
+        redirect('Adminpanel/laporan');
+    }
+    public function edit_laporan()
+    {
+        // get data
+        $id_laporan = $_POST['id_laporan'];
+        $id_barang = $_POST['id_barang'];
+        $status = $_POST['status'];
+        // save data
+        $dataupdate = array(
+            'id_barang' => $id_barang,
+            'status' => $status
+        );
+        // Update data ke tabel 'tbl_laporan'
+        $this->Mcrud->update('tbl_laporan', $dataupdate, 'id_laporan', $id_laporan);
+        if ($status == Diterima) {
+            # code...
+        }
+        $this->session->set_flashdata('flash', 'Diedit');
+        redirect('Adminpanel/barang');
+    }
+    public function hapus_laporan($id)
+    {
+        $datawhere = array('id_laporan' => $id);
+        $data['laporan'] = $this->Mcrud->hapus_data($datawhere, 'tbl_laporan');
+        $this->session->set_flashdata('flash', 'Dihapus');
+        redirect('Adminpanel/laporan');
+    }
 }

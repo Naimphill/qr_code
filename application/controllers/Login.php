@@ -36,7 +36,7 @@ class Login extends CI_Controller
         if ($cek == 1) {
             foreach ($result as $sess) {
                 // $sess_data['logged_in'] = 'Sudah Login';
-                $sess_data['id_user'] = $sess->id_admin;
+                $sess_data['id_user'] = $sess->id_user;
                 $sess_data['username'] = $sess->username;
                 $sess_data['password'] = $sess->password;
                 $sess_data['level'] = $sess->level;
@@ -44,11 +44,13 @@ class Login extends CI_Controller
             }
             if ($this->session->userdata('level') == 'admin') {
                 redirect('Adminpanel');
-            } elseif ($this->session->userdata('level') == 'user') {
+            } elseif ($this->session->userdata('level') == 'guru') {
+                redirect('Dashboard');
+            } elseif ($this->session->userdata('level') == 'siswa') {
                 redirect('Dashboard');
             }
         } else {
-            $this->session->set_flashdata('flash', 'Username dan atau Password salah');
+            $this->session->set_flashdata('error', 'Username dan atau Password salah');
             redirect('login');
         }
 
@@ -57,17 +59,18 @@ class Login extends CI_Controller
     public function save_register()
     {
         //post data
+        $nm_lengkap = $_POST['nm_lengkap'];
         $username = $_POST['username'];
         $password = md5($_POST['password']);
         //save data
         $dataInsert = array(
+            'nm_lengkap' => $nm_lengkap,
             'username' => $username,
             'password' => $password,
-            'level' => 'user'
+            'level' => 'siswa'
         );
         $this->Mcrud->insert('tbl_user', $dataInsert);
-        $this->session->set_flashdata('flash', 'Berhasil');
-
+        $this->session->set_flashdata('success', 'Registrasi berhasil');
         redirect('login');
 
     }

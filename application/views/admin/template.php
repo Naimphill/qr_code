@@ -60,13 +60,17 @@
                             <ul class="nav side-menu">
                                 <li><a href="<?php echo site_url('Adminpanel') ?>"><i class="fa fa-home"></i> Home</a>
                                 </li>
-                                <li><a href="<?php echo site_url('Adminpanel/user') ?>"><i class="fa fa-table"></i>
+                                <li><a href="<?php echo site_url('Adminpanel/user') ?>"><i class="fa fa-user"></i>
                                         User</a>
                                 </li>
                                 <li><a href="<?php echo site_url('Adminpanel/kategori') ?>"><i class="fa fa-edit"></i>
                                         Data Kategori</a></li>
                                 <li><a href="<?php echo site_url('Adminpanel/barang') ?>"><i
                                             class="fa fa-bar-chart-o"></i>Data Barang</a>
+                                </li>
+                                <li><a href="<?php echo site_url('Adminpanel/laporan') ?>"><i
+                                            class="fa fa-envelope"></i>Laporan Kerusakan</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -91,7 +95,8 @@
                                 <div class="dropdown-menu dropdown-usermenu pull-right"
                                     aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="javascript:;"> Profile</a>
-                                    <a class="dropdown-item" href="<?php echo site_url('Login/logout') ?>"><i
+                                    <a class="dropdown-item tombolkeluar"
+                                        href="<?php echo site_url('Login/logout') ?>"><i
                                             class="fa fa-sign-out pull-right"></i>
                                         Log Out</a>
                                 </div>
@@ -271,18 +276,19 @@
 
             Swal.fire({
                 title: 'Kamu Yakin?',
-                text: "Akan Menghapus ?",
+                text: "Akan Mengirim Laporan Kerusakan?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Hapus !',
+                confirmButtonText: 'Kirim !',
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit(); // submit form jika tombol "OK" ditekan
                 }
             })
         });
+
     </script>
     <!-- End sweet allert -->
     <!-- DataTables -->
@@ -297,6 +303,24 @@
         });
         $(document).ready(function () {
             $('#datatabel3').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel4').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel5').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel6').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel7').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel8').DataTable();
+        });
+        $(document).ready(function () {
+            $('#datatabel9').DataTable();
         });
     </script>
     <!-- End DataTables -->
