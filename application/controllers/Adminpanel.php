@@ -205,19 +205,34 @@ class Adminpanel extends CI_Controller
         // Get id_kategori from tbl_master based on id_master
         $id_kategori = $this->Mcrud->get_id_kategori_by_id_master_from_tbl_master_barang($id_master);
 
-        // Ambil nomor urut terakhir dari 'id_bukti'
-        $this->db->select_max('id_barang');
-        $query = $this->db->get('tbl_barang');
-        $row = $query->row();
-        $last_id_barang = $row->id_barang;
-        $last_urut = intval(substr($last_id_barang, -5));
+        // Gabungkan nilai 'KategoriID' dan 'MasterID' untuk menghasilkan bagian awal dari pola ID
+        $id_prefix = $id_kategori . $id_master;
 
-        // Buat nomor urut baru dengan menambahkan 1 pada nomor urut terakhir
+        // Lakukan pencarian untuk mencari ID barang yang sesuai dengan pola yang dihasilkan
+        $this->db->like('id_barang', $id_prefix, 'after');
+        $this->db->order_by('id_barang', 'DESC');
+        $query = $this->db->get('tbl_barang', 1);
+
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            $last_id_barang = $row->id_barang;
+
+            // Mengambil angka terakhir dari ID barang yang cocok dengan pola
+            $last_urut = intval(substr($last_id_barang, -8));
+        } else {
+            // Jika tidak ada data dengan pola yang cocok, set angka urut ke 0
+            $last_urut = 0;
+        }
+
+        // Menambahkan 1 pada angka terakhir untuk mendapatkan angka urut baru
         $new_urut = $last_urut + 1;
-        $new_urut_str = str_pad($new_urut, 5, '0', STR_PAD_LEFT);
 
-        // Gabungkan nilai 'KategoriID', 'MasterID', '00', dan nomor urut baru untuk menghasilkan 'id_barang' yang baru
-        $new_id_barang = $id_kategori . $id_master . '0' . $new_urut_str;
+        // Menggabungkan angka urut baru dengan nol yang diberi padding di depan
+        $new_urut_str = str_pad($new_urut, 8, '0', STR_PAD_LEFT);
+
+        // Gabungkan nilai 'KategoriID', 'MasterID', dan angka urut baru untuk menghasilkan 'id_barang' yang baru
+        $new_id_barang = $id_prefix . $new_urut_str;
+
         $qr_code = $new_id_barang . '.png';
         $datainsert = array(
             'id_barang' => $new_id_barang,
@@ -296,7 +311,7 @@ class Adminpanel extends CI_Controller
         $query = $this->db->select('*')->from('tbl_barang')
             ->where('id_barang >=', $id_barang)
             ->get();
-        $data['barang'] = $query->result();
+        $data['baran'] = $query->result();
         $data['master'] = $this->Mcrud->get_all_data('tbl_master_barang')->result();
 
         //load view
@@ -342,30 +357,60 @@ class Adminpanel extends CI_Controller
         $this->session->set_flashdata('flash', 'Diedit');
         redirect('Adminpanel/laporan');
     }
-    public function edit_laporan()
-    {
-        // get data
-        $id_laporan = $_POST['id_laporan'];
-        $id_barang = $_POST['id_barang'];
-        $status = $_POST['status'];
-        // save data
-        $dataupdate = array(
-            'id_barang' => $id_barang,
-            'status' => $status
-        );
-        // Update data ke tabel 'tbl_laporan'
-        $this->Mcrud->update('tbl_laporan', $dataupdate, 'id_laporan', $id_laporan);
-        if ($status == Diterima) {
-            # code...
-        }
-        $this->session->set_flashdata('flash', 'Diedit');
-        redirect('Adminpanel/barang');
-    }
+    // public function edit_laporan()
+    // {
+    //     // get data
+    //     $id_laporan = $_POST['id_laporan'];
+    //     $id_barang = $_POST['id_barang'];
+    //     $status = $_POST['status'];
+    //     // save data
+    //     $dataupdate = array(
+    //         'id_barang' => $id_barang,
+    //         'status' => $status
+    //     );
+    //     // Update data ke tabel 'tbl_laporan'
+    //     $this->Mcrud->update('tbl_laporan', $dataupdate, 'id_laporan', $id_laporan);
+    //     if ($status == Diterima) {
+    //         # code...
+    //     }
+    //     $this->session->set_flashdata('flash', 'Diedit');
+    //     redirect('Adminpanel/barang');
+    // }
     public function hapus_laporan($id)
     {
         $datawhere = array('id_laporan' => $id);
         $data['laporan'] = $this->Mcrud->hapus_data($datawhere, 'tbl_laporan');
         $this->session->set_flashdata('flash', 'Dihapus');
+        redirect('Adminpanel/laporan');
+    }
+    public function konfirmasi_laporan($id)
+    {
+        $id_laporan = $id;
+        $this->db->select('id_barang');
+        $this->db->where('id_laporan', $id_laporan);
+        $query = $this->db->get('tbl_laporan');
+        $result = $query->row();
+        $id_barang = $result->id_barang;
+        $dataupdate = array(
+            'status' => 'Diterima'
+        );
+        $this->Mcrud->update('tbl_laporan', $dataupdate, 'id_laporan', $id_laporan);
+        $datachange = array(
+            'status' => 'Rusak'
+        );
+        $this->Mcrud->update('tbl_barang', $datachange, 'id_barang', $id_barang);
+        $this->session->set_flashdata('flash', 'Di Konfirmasi');
+        redirect('Adminpanel/laporan');
+    }
+    public function tolak_laporan($id)
+    {
+        $id_laporan = $id;
+        $dataupdate = array(
+            'status' => 'Ditolak'
+        );
+        $this->Mcrud->update('tbl_laporan', $dataupdate, 'id_laporan', $id_laporan);
+
+        $this->session->set_flashdata('flash', 'Di Tolak');
         redirect('Adminpanel/laporan');
     }
 }

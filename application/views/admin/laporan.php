@@ -72,46 +72,17 @@
                                                 <?php echo $lap->status; ?>
                                             </td>
                                             <td>
-                                                <!-- <a class="btn btn-outline-warning" href="" data-toggle="modal"
-                                                    data-target=".detail_<?php // echo $idl; ?>">Detail</a>
-                                                <a class="btn btn-outline-warning" href="" data-toggle="modal"
-                                                    data-target=".id_<?php // echo $idl; ?>">Edit</a> -->
-                                                <a class="btn btn-outline-danger tombolhapus"
-                                                    href="<?php echo site_url('Adminpanel/hapus_laporan/' . $idl) ?>">Hapus</a>
+                                                <?php if ($lap->status == 'Diproses') { ?>
+                                                    <a class="btn btn-outline-success"
+                                                        href="<?php echo site_url('Adminpanel/konfirmasi_laporan/' . $idl) ?>">Konfirmasi</a>
+                                                    <a class=" btn btn-outline-warning"
+                                                        href="<?php echo site_url('Adminpanel/tolak_laporan/' . $idl) ?>">Tolak</a>
+                                                <?php } else { ?>
+                                                    <a class="btn btn-outline-danger tombolhapus"
+                                                        href="<?php //echo site_url('Adminpanel/hapus_laporan/' . $idl) ?>">Hapus</a>
+                                                <?php } ?>
                                             </td>
                                         </tr>
-                                        <!-- Modal Edit-->
-                                        <div class="modal fade id_<?php echo $idl ?>" id="id_<?php echo $idl ?>"
-                                            tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Form Tambah Kategori
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form method="POST"
-                                                            action="<?php echo site_url('Adminpanel/edit_kategori') ?>">
-                                                            <div class="form-group">
-                                                                <label for="exampleFormControlInput1">Nama Kategori</label>
-                                                                <input type="text" class="form-control" name="nm_kategori"
-                                                                    value="<?php echo $kat->nm_kategori; ?>">
-
-                                                                <input type="hidden" class="form-control" name="id_kategori"
-                                                                    value="<?php echo $idl; ?>">
-                                                            </div>
-                                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- End Modal Edit -->
                                     <?php } ?>
                                 </tbody>
                             </table>

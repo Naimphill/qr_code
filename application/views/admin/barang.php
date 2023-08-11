@@ -317,12 +317,12 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleFormControlInput1">Jenis Barang</label>
-                        <input type="text" class="form-control" name="jenis_barang">
+                        <input type="text" class="form-control" name="jenis_barang" required>
                     </div>
                     <div class="form-group">
-                        <label for="exampleFormControlInput1">Th. Pembelian</label>
+                        <label for="tahun">Th. Pembelian</label>
                         <input class="form-control" type="number" id="tahun" name="th_pembelian" min="1900" max="2099"
-                            step="1">
+                            step="1" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
